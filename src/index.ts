@@ -25,7 +25,7 @@ app.get("/pub/:artifact/:file(*)", async (req, res) => {
 
 // TODO: Authorized downloads
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.redirect(301, "https://paramorphism.dev/")
 })
 
