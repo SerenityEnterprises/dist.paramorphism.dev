@@ -23,7 +23,21 @@ app.get("/pub/:artifact/:file(*)", async (req, res) => {
   })
 })
 
-// TODO: Authorized downloads
+app.get("/:token/:artifact/:file(*)", async (req, res) => {
+  const { token, artifact, file } = req.params
+  const ip = req.ip
+
+  https.get(`${ALLOC_BASE_URL}/get/${token}/${ALLOC_APPLICATION}/${artifact}/${file}`, {
+    headers: {
+      'X-Alloc-Forwarded-IP': ip,
+      'X-Alloc-IP-Forwarding-Key': ALLOC_API_KEY
+    }
+  }, allocResponse => {
+    res.statusCode = allocResponse.statusCode || 500
+    res.set(allocResponse.headers)
+    allocResponse.pipe(res)
+  })
+})
 
 app.use((req, res, next) => {
   res.redirect(301, "https://paramorphism.dev/")
